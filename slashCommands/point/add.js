@@ -1,6 +1,7 @@
 const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType } = require('discord.js');
 const db = require("../../connexion.js");
 const { error } = require('node:console');
+const { updatePoint } = require('../../services/uptadeEmbedPoint.js');
 module.exports = {
 	name: 'add',
 	description: "Permet d'ajouter des points à une maison.",
@@ -8,14 +9,14 @@ module.exports = {
 	options: [
         {
             name: 'maison',
-            description: 'Choisi une maison',
+            description: 'Choisissez une maison.',
             type: 3,
             required: true,
             autocomplete: true
         },
         {
             name: 'point',
-            description: 'Nombres de point à ajouté ou à enlever',
+            description: 'Nombre de points à ajouter ou à retirer',
             type: ApplicationCommandOptionType.Integer,
             required: true,
             autocomplete: false
@@ -52,7 +53,7 @@ module.exports = {
         if(!hasRole)
         {
             return interaction.reply({
-                    content: `Vous devez êtres 🎓Professeur pour ajouter des points `,
+                    content: `"Vous devez être 🎓Professeur pour ajouter des points. `,
                     ephemeral: true
                 })
         }
@@ -67,8 +68,8 @@ module.exports = {
 
             if(err)
             {
-                interaction.reply({
-                    content: "Erreur dans la base de donnée. Merci de le signaler à <@692898154558783508>",
+                return interaction.reply({
+                    content: "Erreur dans la base de données. Merci de la signaler à <@692898154558783508>.",
                     ephemeral: true
                 });
                 console.log(err)
@@ -78,8 +79,8 @@ module.exports = {
             
             if(!row || row.length === 0)
             {
-                interaction.reply({
-                    content: "La maison n'existe pas. Merci de le signaler à <@692898154558783508>",
+                return interaction.reply({
+                    content: "Cette maison n'existe pas. Merci de le signaler à <@692898154558783508>.",
                     ephemeral: true
                 });
             }
@@ -90,15 +91,16 @@ module.exports = {
 
                 if (err2) 
                 {
-                    return interaction.reply({content: "Erreur dans les points aucun point supprimé.",
+                    return interaction.reply({content: "Erreur lors de la modification des points. Aucun point n'a été ajouté ou retiré. Merci de le signaler à <@692898154558783508>.",
                         ephemeral: true
                     });
                 }
 
                 db.query('INSERT INTO PointLog ( house_id , points, profs_id )  VALUES (?, ?, ?)', [housseId, pointAjoutSuppression, interaction.user.id ])   
+                updatePoint(client, interaction.guild.id)
                 
                 return interaction.reply({
-                    content: `✅ ${pointAjoutSuppression} points ajoutés à ${maison}`,
+                    content: `${pointAjoutSuppression} point(s) ajouté(s) à ${maison}.`,
                     ephemeral: true
                 })
             })

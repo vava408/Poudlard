@@ -27,6 +27,6 @@ client.on('clientReady', () => {
 		client.user.setStatus(status[s])
 		s++;
 	}, 30000);
-	startWeatherScheduler(client);
+	//startWeatherScheduler(client);
 	console.log(chalk.red(`Logged in as ${client.user.tag}!`))
 });
