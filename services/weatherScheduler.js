@@ -7,10 +7,11 @@ let createCanvas;
 let loadImage;
 
 try {
-  const canvasLib = require('canvas');
+  const canvasLib = require('@napi-rs/canvas');
   createCanvas = canvasLib.createCanvas;
   loadImage = canvasLib.loadImage;
 } catch (error) {
+  console.error('Erreur chargement canvas:', error);
   createCanvas = null;
   loadImage = null;
 }
